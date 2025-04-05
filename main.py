@@ -6,7 +6,7 @@ from typing import Optional, List
 
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from mangum import Mangum
+import uvicorn
 
 try:
     from youtube_transcript_api import YouTubeTranscriptApi
@@ -143,10 +143,8 @@ async def get_video_timestamps(request: YouTubeRequest):
     """Endpoint to get video timestamps"""
     return YouTubeTools.get_video_timestamps(request.url, request.languages)
 
-# Add a root endpoint for health check
-@app.get("/")
-async def root():
-    return {"message": "YouTube Tools API is running"}
-
-# Create handler for AWS Lambda / Vercel
-handler = Mangum(app)
+if __name__ == "__main__":
+    # Use environment variable for port, default to 8000 if not set
+    port = int(os.getenv("PORT", 8000))
+    host = os.getenv("HOST", "0.0.0.0")
+    uvicorn.run(app, host=host, port=port)
