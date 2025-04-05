@@ -142,17 +142,35 @@ class YouTubeRequest(BaseModel):
 @app.post("/api/video-data")
 async def get_video_data(request: YouTubeRequest):
     """Endpoint to get video metadata"""
-    return YouTubeTools.get_video_data(request.url)
+    try:
+        data = YouTubeTools.get_video_data(request.url)
+        return {"status": "success", "data": data}
+    except HTTPException as he:
+        return {"status": "error", "message": str(he.detail)}
+    except Exception as e:
+        return {"status": "error", "message": f"Error fetching video data: {str(e)}"}
 
 @app.post("/api/video-captions")
 async def get_video_captions(request: YouTubeRequest):
     """Endpoint to get video captions"""
-    return {"captions": YouTubeTools.get_video_captions(request.url, request.languages)}
+    try:
+        captions = YouTubeTools.get_video_captions(request.url, request.languages)
+        return {"status": "success", "captions": captions}
+    except HTTPException as he:
+        return {"status": "error", "message": str(he.detail)}
+    except Exception as e:
+        return {"status": "error", "message": f"Error fetching captions: {str(e)}"}
 
 @app.post("/api/video-timestamps")
 async def get_video_timestamps(request: YouTubeRequest):
     """Endpoint to get video timestamps"""
-    return {"timestamps": YouTubeTools.get_video_timestamps(request.url, request.languages)}
+    try:
+        timestamps = YouTubeTools.get_video_timestamps(request.url, request.languages)
+        return {"status": "success", "timestamps": timestamps}
+    except HTTPException as he:
+        return {"status": "error", "message": str(he.detail)}
+    except Exception as e:
+        return {"status": "error", "message": f"Error generating timestamps: {str(e)}"}
 
 # For vercel serverless function compatibility
 from mangum import Adapter

@@ -115,12 +115,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify({ url }),
             });
             
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.detail || 'Failed to fetch video data');
+            const data = await response.json();
+            
+            if (data.status === 'error') {
+                throw new Error(data.message || 'Failed to fetch video data');
             }
             
-            return await response.json();
+            return data.data;
         } catch (error) {
             throw new Error('Error fetching video data: ' + error.message);
         }
@@ -145,12 +146,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify(requestBody),
             });
             
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.detail || 'Failed to fetch subtitles');
+            const data = await response.json();
+            
+            if (data.status === 'error') {
+                throw new Error(data.message || 'Failed to fetch subtitles');
             }
             
-            const data = await response.json();
             return data.captions;
         } catch (error) {
             throw new Error('Error fetching subtitles: ' + error.message);
@@ -176,12 +177,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify(requestBody),
             });
             
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.detail || 'Failed to fetch timestamps');
+            const data = await response.json();
+            
+            if (data.status === 'error') {
+                throw new Error(data.message || 'Failed to fetch timestamps');
             }
             
-            const data = await response.json();
             return data.timestamps;
         } catch (error) {
             throw new Error('Error fetching timestamps: ' + error.message);
@@ -195,11 +196,12 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="video-details">
                 <div class="video-title">${videoData.title}</div>
                 <div class="video-author">
+                    <i class="fas fa-user-circle"></i>
                     <a href="${videoData.author_url}" target="_blank">${videoData.author_name}</a>
                 </div>
                 <div class="video-link">
                     <a href="https://www.youtube.com/watch?v=${videoData.video_id}" target="_blank">
-                        Watch on YouTube
+                        <i class="fab fa-youtube"></i> Watch on YouTube
                     </a>
                 </div>
             </div>
@@ -221,7 +223,7 @@ document.addEventListener('DOMContentLoaded', () => {
             timestampItem.innerHTML = `
                 <a href="https://www.youtube.com/watch?v=${videoId}&t=${totalSeconds}" 
                    target="_blank" 
-                   class="timestamp-link">${time}</a> - ${text}
+                   class="timestamp-link"><i class="fas fa-play-circle"></i> ${time}</a> - ${text}
             `;
             
             timestampsOutput.appendChild(timestampItem);
